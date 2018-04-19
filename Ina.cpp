@@ -14,8 +14,10 @@ void Ina::test(unsigned long currTime) {
 	if ((lastTestTime + deltaTimeTestIna) <= currTime) {
 		lastTestTime = currTime;
 
-		Serial.print("Voltage: ");
-		Serial.println(data->getVolt());
+		Serial.print("VoltageA: ");
+		Serial.println(data->getVoltA());
+		Serial.print("VoltageB: ");
+		Serial.println(data->getVoltB());
 	}
 }
 
@@ -27,9 +29,9 @@ void Ina::flightProcess(unsigned long currTime) {
 	if ((lastActionTime + deltaTimeFlightIna) <= currTime) {
 		lastActionTime = currTime;
 
-		float voltage = ina219A.getBusVoltage_V();
-		//float voltageB = ina219B.getBusVoltage_V();
-		data->setVolt(voltage);
+		float voltageA = ina219A.getBusVoltage_V();
+		float voltageB = ina219B.getBusVoltage_V();
+		data->setVolt(voltageA, voltageB);
 
 		Serial.println("Ina ---> flightProcess");
 	}

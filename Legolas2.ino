@@ -30,7 +30,7 @@ void setup() {
 	dof.init(flightdata);
 	ina.init(flightdata);
 	bme280.init(flightdata);
-	com.init(flightdata);
+	//com.init(flightdata);
 	sdCard.init(flightdata);
 }
 
@@ -39,7 +39,7 @@ void loop() {
 	dof.flightProcess(millis());
 	ina.flightProcess(millis());
 	bme280.flightProcess(millis());
-	com.flightProcess(millis());
+	//com.flightProcess(millis());
 	sdCard.flightProcess(millis());
 
 	gps.test(millis());

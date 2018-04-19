@@ -9,6 +9,9 @@ void SdCard::init(Flightdata& flightdata) {
 		Serial.println("SD init failed.");
 		return;
 	}
+	dataLog = SD.open("log.txt", FILE_WRITE);
+	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity");
+	dataLog.close();
 	Serial.println("SD init.");
 }
 
@@ -24,7 +27,8 @@ void SdCard::flightProcess(unsigned long currTime) {
 		static char accelX[15];
 		static char accelY[15];
 		static char accelZ[15];
-		static char volt[15];
+		static char voltA[15];
+		static char voltB[15];
 		static char lat[15];
 		static char lon[15];
 		static char GPSAlt[15];
@@ -40,7 +44,8 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dtostrf(data->getAccelX(), 9, 2, accelX);
 		dtostrf(data->getAccelY(), 9, 2, accelY);
 		dtostrf(data->getAccelZ(), 9, 2, accelZ);
-		dtostrf(data->getVolt(), 9, 2, volt);
+		dtostrf(data->getVoltA(), 9, 2, voltA);
+		dtostrf(data->getVoltB(), 9, 2, voltB);
 		dtostrf(data->getLat(), 9, 2, lat);
 		dtostrf(data->getLon(), 9, 2, lon);
 		dtostrf(data->getGPSAlt(), 9, 2, GPSAlt);
@@ -52,9 +57,12 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dtostrf(data->getAlt(), 9, 2, alt);
 		dtostrf(data->getHum(), 9, 2, hum);
 
-		dataLog = SD.open("D://FlightLog.csv", FILE_WRITE);
+		dataLog = SD.open("log.txt", FILE_WRITE);
 		if (dataLog) {
-			dataLog.println("testA,testB,testC");
+			char telemString[340]; //max Iridium send size
+        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+        		accelMag, accelX, accelY, accelZ, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum);
+			dataLog.println(telemString);
 			dataLog.close();
 		}
 		else {

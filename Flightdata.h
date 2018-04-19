@@ -24,8 +24,11 @@ public:
 	float getAccelMag() {
 		return sqrt(pow(fAccelX, 2) + pow(fAccelY, 2) + pow(fAccelZ, 2));
 	}
-	float getVolt() {
-		return fVolt;
+	float getVoltA() {
+		return fVoltA;
+	}
+	float getVoltB() {
+		return fVoltB;
 	}
 	float getLat() {
 		return fLat;
@@ -59,7 +62,8 @@ public:
 	}
 	char* getStrFlightdata() { 
 		static char accelMag[15];
-		static char volt[15];
+		static char voltA[15];
+		static char voltB[15];
 		static char lat[15];
 		static char lon[15];
 		static char GPSAlt[15];
@@ -72,7 +76,8 @@ public:
 		static char hum[15];
 
 		dtostrf(getAccelMag(), 9, 2, accelMag);
-		dtostrf(fVolt, 9, 2, volt);
+		dtostrf(fVoltA, 9, 2, voltA);
+		dtostrf(fVoltB, 9, 2, voltB);
 		dtostrf(fLat, 9, 2, lat);
 		dtostrf(fLon, 9, 2, lon);
 		dtostrf(fGPSAlt, 9, 2, GPSAlt);
@@ -86,8 +91,8 @@ public:
 		
 
         char telemString[340]; //max Iridium send size
-        snprintf(telemString, sizeof(telemString), "AccelMag: %s\nVolt: %s\nLat:  %s\nLon:  %s\nGPS Alt: %s\nTime: %s:%s:%s\nTemp: %s\nPres: %s\nBaro Alt: %s\nHumidity: %s\n", 
-        		accelMag, volt, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum);
+        snprintf(telemString, sizeof(telemString), "AccelMag: %s\nVoltA: %s\nVoltB: %s\nLat:  %s\nLon:  %s\nGPS Alt: %s\nTime: %s:%s:%s\nTemp: %s\nPres: %s\nBaro Alt: %s\nHumidity: %s\n", 
+        		accelMag, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum);
 
         return telemString;
 	}
@@ -104,8 +109,9 @@ public:
 		fAccelY = y;
 		fAccelZ = z;
 	}
-	void setVolt(float v) {
-		fVolt = v;
+	void setVolt(float vA, float vB) {
+		fVoltA = vA;
+		fVoltB = vB;
 	}
 	void setPosition(float lat, float lon, float alt) {
 		fLat = lat;
@@ -136,7 +142,8 @@ private:
 	float fAccelX = 0;
 	float fAccelY = 0;
 	float fAccelZ = 0;
-	float fVolt = 0;
+	float fVoltA = 0;
+	float fVoltB = 0;
 	float fLat = 0;
 	float fLon = 0;
 	float fGPSAlt = 0;
