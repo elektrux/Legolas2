@@ -103,17 +103,61 @@ public:
 		return remoteAbort;
 	}
 
+	//situational assesment functions
+	bool imuDetectsFreeFall() {
+		int sum = 0;
+		for (int i = 0; i < sizeof(accelQueue); i++) {
+			sum += accelQueue[i];
+		}
+		int average = sum/sizeof(accelQueue);
+		if ((average > -2) && (average < 2)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool gpsDetectsFreeFall() {
+		if (fGPSAlt < (highestGPSAlt - 700)) { //has descended ~ 2000ft below peak altitude
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool barometerDetectsFreeFall() {
+		if (fAlt < (highestBaroAlt - 700)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	//setters
 	void setAccel(float x, float y, float z) {
 		fAccelX = x;
 		fAccelY = y;
 		fAccelZ = z;
+		for (int i = (sizeof(accelQueue) - 1); i >= 0; i--) { //add to beginning of queue and shift
+			if (i != 0) {
+				accelQueue[i] = accelQueue[i-1]; //shifts queue up
+			}
+			else {
+				accelQueue[i] = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)); //sets element 0 to most recent mag
+			}
+		}
 	}
 	void setVolt(float vA, float vB) {
 		fVoltA = vA;
 		fVoltB = vB;
 	}
 	void setPosition(float lat, float lon, float alt) {
+		if (alt > highestGPSAlt) {
+			highestGPSAlt = alt;
+		}
 		fLat = lat;
 		fLon = lon;
 		fGPSAlt = alt;
@@ -124,6 +168,9 @@ public:
 		iSecond = s;
 	}
 	void setBme(float temp, float pres, float alt, float hum) {
+		if (alt > highestBaroAlt) {
+			highestBaroAlt = alt;
+		}
 		fTemp = temp;
 		fPres = pres;
 		fAlt = alt;
@@ -156,4 +203,8 @@ private:
 	float fHum = 0;
 
 	bool remoteAbort = false;
+
+	float accelQueue[6] = {10, 10, 10, 10, 10, 10};
+	float highestGPSAlt = 0;
+	float highestBaroAlt = 0;
 };
