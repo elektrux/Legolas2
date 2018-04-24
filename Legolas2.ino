@@ -7,10 +7,10 @@
 #include "SdCard.h"
 
 //actuators
-#define ARM -1
-#define FIRE_CUTDOWN_A -1
-#define FIRE_CUTDOWN_B -1
-#define DEPLOY_CHUTE -1
+#define ARM 12
+#define FIRE_CUTDOWN_A 11
+#define FIRE_CUTDOWN_B 10
+#define DEPLOY_CHUTE 49
 
 //pins
 const int kGpsRxPin = 62; //switched wiring A8
@@ -25,30 +25,32 @@ Com com;
 SdCard sdCard;
 
 void cutDown() {
-	pinMode(ARM, LOW);
-	pinMode(FIRE_CUTDOWN_A, HIGH);
-	delay(500);
-	pinMode(FIRE_CUTDOWN_A, LOW);
+	digitalWrite(ARM, LOW);
+	digitalWrite(FIRE_CUTDOWN_A, HIGH);
 	delay(100);
-	pinMode(FIRE_CUTDOWN_B, HIGH);
-	delay(500);
-	pinMode(FIRE_CUTDOWN_B, LOW);
-	pinMode(ARM, HIGH);
+	digitalWrite(FIRE_CUTDOWN_A, LOW);
+	delay(20);
+	digitalWrite(FIRE_CUTDOWN_B, HIGH);
+	delay(100);
+	digitalWrite(FIRE_CUTDOWN_B, LOW);
+	digitalWrite(ARM, HIGH);
 }
 
 void deployChute() {
-	pinMode(ARM, LOW);
-	pinMode(DEPLOY_CHUTE, HIGH);
-	delay(500);
-	pinMode(DEPLOY_CHUTE, LOW);
-	pinMode(ARM, HIGH);
+	digitalWrite(ARM, LOW);
+	digitalWrite(DEPLOY_CHUTE, HIGH);
+	delay(100);
+	digitalWrite(DEPLOY_CHUTE, LOW);
+	digitalWrite(ARM, HIGH);
 
 	flightdata.setFlightState(UNDER_CHUTES);
 }
 
 void setup() {
 	pinMode(ARM, OUTPUT);
-	digitalWrite(ARM, HIGH);
+	pinMode(FIRE_CUTDOWN_A, OUTPUT);
+	pinMode(FIRE_CUTDOWN_B, OUTPUT);
+	pinMode(DEPLOY_CHUTE, OUTPUT);
 
 	Serial.begin(9600);
 	gps.init(kGpsRxPin, kGpsTxPin, flightdata);
@@ -60,28 +62,28 @@ void setup() {
 }
 
 void loop() {
-	gps.flightProcess(millis());
-	dof.flightProcess(millis());
-	ina.flightProcess(millis());
-	bme280.flightProcess(millis());
-	//com.flightProcess(millis());
-	sdCard.flightProcess(millis());
 
-	gps.test(millis());
-	dof.test(millis());
-	ina.test(millis());
-	bme280.test(millis());
-
-
-
-	//actuation logic
 	if (flightdata.getFlightState() == ASCENT) {
-		if ((flightdata.getRemoteAbort()) || (flightdata.imuDetectsFreeFall()) || (flightdata.gpsDetectsFreeFall()) || (flightdata.barometerDetectsFreeFall())) {
+		gps.flightProcess(millis());
+		dof.flightProcess(millis());
+		ina.flightProcess(millis());
+		bme280.flightProcess(millis());
+		sdCard.flightProcess(millis());
+		if (!comTransmitting) {
+			com.flightProcess(millis());
+		}
+
+		if ((flightdata.getRemoteAbort()) || (flightdata.imuDetectsFreeFall()) || (flightdata.gpsDetectsFreeFall()) || (flightdata.barometerDetectsFreeFall()) || (flightdata.busVoltageLow())) {
 			cutDown();
 			flightdata.setFlightState(FREEFALL);
 		}
-
 	}
+	else if (flightdata.getFlightState() == FREEFALL) {
+		delay(70500); //min time to 20,000 ft 70.5 sec
+		deployChute();
+		flightdata.setFlightState(UNDER_CHUTES);
+	}
+
 	
 
 }

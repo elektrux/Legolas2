@@ -39,6 +39,7 @@ void SdCard::flightProcess(unsigned long currTime) {
 		static char pres[15];
 		static char alt[15];
 		static char hum[15];
+		static char flightState[15];
 
 		dtostrf(data->getAccelMag(), 9, 2, accelMag);
 		dtostrf(data->getAccelX(), 9, 2, accelX);
@@ -56,12 +57,13 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dtostrf(data->getPres(), 9, 2, pres);
 		dtostrf(data->getAlt(), 9, 2, alt);
 		dtostrf(data->getHum(), 9, 2, hum);
+		dtostrf(data->getFlightState(), 9, 2, flightState);
 
 		dataLog = SD.open("log.txt", FILE_WRITE);
 		if (dataLog) {
 			char telemString[340]; //max Iridium send size
-        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-        		accelMag, accelX, accelY, accelZ, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum);
+        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+        		accelMag, accelX, accelY, accelZ, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, flightState);
 			dataLog.println(telemString);
 			dataLog.close();
 		}

@@ -119,7 +119,7 @@ public:
 	}
 
 	bool gpsDetectsFreeFall() {
-		if (fGPSAlt < (highestGPSAlt - 700)) { //has descended ~ 2000ft below peak altitude
+		if (fGPSAlt < (highestGPSAlt - 200)) {
 			return true;
 		}
 		else {
@@ -128,12 +128,17 @@ public:
 	}
 
 	bool barometerDetectsFreeFall() {
-		if (fAlt < (highestBaroAlt - 700)) {
+		if (fAlt < (highestBaroAlt - 200)) {
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
+
+	bool busVoltageLow() {
+		if ((fVoltA < 3) || (fVoltB < 3)) //!!!replace with actual values
+			return true;
 	}
 
 	//setters
