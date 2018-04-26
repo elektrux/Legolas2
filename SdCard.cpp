@@ -10,7 +10,7 @@ void SdCard::init(Flightdata& flightdata) {
 		return;
 	}
 	dataLog = SD.open("log.txt", FILE_WRITE);
-	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity");
+	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning");
 	dataLog.close();
 	Serial.println("SD init.");
 }
@@ -40,6 +40,9 @@ void SdCard::flightProcess(unsigned long currTime) {
 		static char alt[15];
 		static char hum[15];
 		static char flightState[15];
+		static char gpsFreeFallWarning[15];
+		static char imuFreeFallWarning[15];
+		static char baroFreeFallWarning[15];
 
 		dtostrf(data->getAccelMag(), 9, 2, accelMag);
 		dtostrf(data->getAccelX(), 9, 2, accelX);
@@ -58,14 +61,18 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dtostrf(data->getAlt(), 9, 2, alt);
 		dtostrf(data->getHum(), 9, 2, hum);
 		dtostrf(data->getFlightState(), 9, 2, flightState);
+		dtostrf(data->gpsFreeFallWarning, 9, 2, gpsFreeFallWarning);
+		dtostrf(data->imuFreeFallWarning, 9, 2, imuFreeFallWarning);
+		dtostrf(data->baroFreeFallWarning, 9, 2, baroFreeFallWarning);
 
 		dataLog = SD.open("log.txt", FILE_WRITE);
 		if (dataLog) {
 			char telemString[340]; //max Iridium send size
-        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-        		accelMag, accelX, accelY, accelZ, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, flightState);
+        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+        		accelMag, accelX, accelY, accelZ, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, flightState, gpsFreeFallWarning, imuFreeFallWarning, baroFreeFallWarning);
 			dataLog.println(telemString);
 			dataLog.close();
+			Serial.println("SD ---> flightProcess");
 		}
 		else {
 			Serial.println("Logging failed.");

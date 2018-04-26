@@ -64,26 +64,31 @@ void setup() {
 void loop() {
 
 	if (flightdata.getFlightState() == ASCENT) {
-		gps.flightProcess(millis());
+		//gps.flightProcess(millis());
 		dof.flightProcess(millis());
 		ina.flightProcess(millis());
 		bme280.flightProcess(millis());
 		sdCard.flightProcess(millis());
-		if (!comTransmitting) {
+		/*if (!comTransmitting) {
 			com.flightProcess(millis());
-		}
-
-		if ((flightdata.getRemoteAbort()) || (flightdata.imuDetectsFreeFall()) || (flightdata.gpsDetectsFreeFall()) || (flightdata.barometerDetectsFreeFall()) || (flightdata.busVoltageLow())) {
+		}*/
+		Serial.println(flightdata.imuDetectsFreeFall());
+		if ((flightdata.getRemoteAbort()) || /*(flightdata.imuDetectsFreeFall()) || */(flightdata.gpsDetectsFreeFall()) || (flightdata.barometerDetectsFreeFall()) || (flightdata.busVoltageLow())) {
+			Serial.println("Cutdown.");
+			//Serial.println(flightdata.busVoltageLow());
 			cutDown();
 			flightdata.setFlightState(FREEFALL);
 		}
+
 	}
 	else if (flightdata.getFlightState() == FREEFALL) {
 		delay(70500); //min time to 20,000 ft 70.5 sec
 		deployChute();
 		flightdata.setFlightState(UNDER_CHUTES);
 	}
-
-	
+	gps.test(millis());
+	dof.test(millis());
+	ina.test(millis());
+	bme280.test(millis());	
 
 }

@@ -9,6 +9,8 @@
 #define UNDER_DROGUES 3
 #define UNDER_CHUTES 4
 
+
+
 class Flightdata {
 public:
 	//getters
@@ -105,21 +107,23 @@ public:
 
 	//situational assesment functions
 	bool imuDetectsFreeFall() {
-		int sum = 0;
-		for (int i = 0; i < sizeof(accelQueue); i++) {
+		float sum = 0;
+		for (int i = 0; i < 6; i++) {
 			sum += accelQueue[i];
 		}
-		int average = sum/sizeof(accelQueue);
+		float average = sum/6;
 		if ((average > -2) && (average < 2)) {
-			return true;
+			imuFreeFallWarning = true;
+			return;
 		}
 		else {
-			return false;
+			return;
 		}
 	}
 
 	bool gpsDetectsFreeFall() {
 		if (fGPSAlt < (highestGPSAlt - 200)) {
+			gpsFreeFallWarning = true;
 			return true;
 		}
 		else {
@@ -129,6 +133,7 @@ public:
 
 	bool barometerDetectsFreeFall() {
 		if (fAlt < (highestBaroAlt - 200)) {
+			baroFreeFallWarning = true;
 			return true;
 		}
 		else {
@@ -136,9 +141,10 @@ public:
 		}
 	}
 
-	bool busVoltageLow() {
-		if ((fVoltA < 3) || (fVoltB < 3)) //!!!replace with actual values
-			return true;
+	float busVoltageLow() {
+		if (fVoltA < 3) { //!!!replace with actual values
+			return fVoltA;
+		}
 	}
 
 	//setters
@@ -146,9 +152,9 @@ public:
 		fAccelX = x;
 		fAccelY = y;
 		fAccelZ = z;
-		for (int i = (sizeof(accelQueue) - 1); i >= 0; i--) { //add to beginning of queue and shift
-			if (i != 0) {
-				accelQueue[i] = accelQueue[i-1]; //shifts queue up
+		for (int i = 0; i < 6; i++) { //add to beginning of queue and shift
+			if (i ! = 5) {
+				accelQueue[i] = accelQueue[i+1]; //shifts queue up
 			}
 			else {
 				accelQueue[i] = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)); //sets element 0 to most recent mag
@@ -187,9 +193,12 @@ public:
 	void setFlightState(int state) {
 		flightState = state;
 	}
-
+	bool gpsFreeFallWarning = false;
+	bool baroFreeFallWarning = false;
+	bool imuFreeFallWarning = false;
 private:
-	int flightState = 0;
+	int flightState = 1;
+
 
 	float fAccelX = 0;
 	float fAccelY = 0;
