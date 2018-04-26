@@ -114,10 +114,10 @@ public:
 		float average = sum/6;
 		if ((average > -2) && (average < 2)) {
 			imuFreeFallWarning = true;
-			return;
+			return true;
 		}
 		else {
-			return;
+			return false;
 		}
 	}
 
