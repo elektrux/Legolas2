@@ -153,11 +153,11 @@ public:
 		fAccelY = y;
 		fAccelZ = z;
 		for (int i = 0; i < 6; i++) { //add to beginning of queue and shift
-			if (i ! = 5) {
+			if (i != 5) {
 				accelQueue[i] = accelQueue[i+1]; //shifts queue up
 			}
 			else {
-				accelQueue[i] = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)); //sets element 0 to most recent mag
+				accelQueue[i] = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)); 
 			}
 		}
 	}

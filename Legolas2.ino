@@ -72,8 +72,7 @@ void loop() {
 		/*if (!comTransmitting) {
 			com.flightProcess(millis());
 		}*/
-		Serial.println(flightdata.imuDetectsFreeFall());
-		if ((flightdata.getRemoteAbort()) || /*(flightdata.imuDetectsFreeFall()) || */(flightdata.gpsDetectsFreeFall()) || (flightdata.barometerDetectsFreeFall()) || (flightdata.busVoltageLow())) {
+		if ((flightdata.getRemoteAbort()) || (flightdata.imuDetectsFreeFall()) || (flightdata.gpsDetectsFreeFall()) || (flightdata.barometerDetectsFreeFall()) || (flightdata.busVoltageLow())) {
 			Serial.println("Cutdown.");
 			//Serial.println(flightdata.busVoltageLow());
 			cutDown();
