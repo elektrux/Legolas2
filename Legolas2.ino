@@ -25,23 +25,23 @@ Com com;
 SdCard sdCard;
 
 void cutDown() {
-	digitalWrite(ARM, LOW);
-	digitalWrite(FIRE_CUTDOWN_A, HIGH);
-	delay(100);
-	digitalWrite(FIRE_CUTDOWN_A, LOW);
-	delay(20);
-	digitalWrite(FIRE_CUTDOWN_B, HIGH);
-	delay(100);
-	digitalWrite(FIRE_CUTDOWN_B, LOW);
 	digitalWrite(ARM, HIGH);
+	digitalWrite(FIRE_CUTDOWN_A, HIGH);
+	delay(500);
+	digitalWrite(FIRE_CUTDOWN_A, LOW);
+	delay(100);
+	digitalWrite(FIRE_CUTDOWN_B, HIGH);
+	delay(500);
+	digitalWrite(FIRE_CUTDOWN_B, LOW);
+	digitalWrite(ARM, LOW);
 }
 
 void deployChute() {
-	digitalWrite(ARM, LOW);
-	digitalWrite(DEPLOY_CHUTE, HIGH);
-	delay(100);
-	digitalWrite(DEPLOY_CHUTE, LOW);
 	digitalWrite(ARM, HIGH);
+	digitalWrite(DEPLOY_CHUTE, HIGH);
+	delay(500);
+	digitalWrite(DEPLOY_CHUTE, LOW);
+	digitalWrite(ARM, LOW);
 
 	flightdata.setFlightState(UNDER_CHUTES);
 }
@@ -81,9 +81,12 @@ void loop() {
 
 	}
 	else if (flightdata.getFlightState() == FREEFALL) {
-		delay(70500); //min time to 20,000 ft 70.5 sec
+		delay(10000); //min time to 20,000 ft 70.5 sec
 		deployChute();
 		flightdata.setFlightState(UNDER_CHUTES);
+	}
+	else if (flightdata.getFlightState() == UNDER_CHUTES) {
+		
 	}
 	gps.test(millis());
 	dof.test(millis());
