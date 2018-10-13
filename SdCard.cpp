@@ -10,7 +10,7 @@ void SdCard::init(Flightdata& flightdata) {
 		return;
 	}
 	dataLog = SD.open("log.txt", FILE_WRITE);
-	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning");
+	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning,LowVoltageWarning,BaroLandingWarning");
 	dataLog.close();
 	Serial.println("SD init.");
 }
@@ -43,6 +43,8 @@ void SdCard::flightProcess(unsigned long currTime) {
 		static char gpsFreeFallWarning[15];
 		static char imuFreeFallWarning[15];
 		static char baroFreeFallWarning[15];
+		static char lowVoltageWarning[15];
+		static char baroLandingWarning[15];
 
 		dtostrf(data->getAccelMag(), 9, 2, accelMag);
 		dtostrf(data->getAccelX(), 9, 2, accelX);
@@ -64,12 +66,14 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dtostrf(data->gpsFreeFallWarning, 9, 2, gpsFreeFallWarning);
 		dtostrf(data->imuFreeFallWarning, 9, 2, imuFreeFallWarning);
 		dtostrf(data->baroFreeFallWarning, 9, 2, baroFreeFallWarning);
+		dtostrf(data->lowVoltageWarning, 9, 2, lowVoltageWarning);
+		dtostrf(data->baroLandingWarning, 9, 2, baroLandingWarning);
 
 		dataLog = SD.open("log.txt", FILE_WRITE);
 		if (dataLog) {
 			char telemString[340]; //max Iridium send size
-        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-        		accelMag, accelX, accelY, accelZ, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, flightState, gpsFreeFallWarning, imuFreeFallWarning, baroFreeFallWarning);
+        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+        		accelMag, accelX, accelY, accelZ, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, flightState, gpsFreeFallWarning, imuFreeFallWarning, baroFreeFallWarning, lowVoltageWarning, baroLandingWarning);
 			dataLog.println(telemString);
 			dataLog.close();
 			Serial.println("SD ---> flightProcess");

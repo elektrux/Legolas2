@@ -15,18 +15,17 @@ void Com::flightProcess(unsigned long currTime) {
 		lastActionTime = currTime;
 
 		IridiumSBD isbd(Serial1);
-
   		err = isbd.begin();
   		if (err != ISBD_SUCCESS) {
     		Serial.print("Begin failed: error ");
-    		Serial.println(err);
+    		Serial.println(err); 
     		if (err == ISBD_NO_MODEM_DETECTED) {
       			Serial.println("No modem detected: check wiring.");
     		}
     		return;
 		}
         isbd.adjustSendReceiveTimeout(120); //300s by default
-		err = isbd.getSignalQuality(signalQuality);
+		  err = isbd.getSignalQuality(signalQuality);
   		if (err != ISBD_SUCCESS) {
     		Serial.print("SignalQuality failed: error ");
     		Serial.println(err);
@@ -36,17 +35,18 @@ void Com::flightProcess(unsigned long currTime) {
     	Serial.println(signalQuality);
 
     	Serial.println("Sending telemetry:\n\n");
-    	Serial.println(data->getStrFlightdata());
+    	//Serial.println(data->getStrFlightdata());
 
-        size_t bufferSize;
-        uint8_t receiveBuffer[270];
-        uint8_t *buffer = receiveBuffer;
-        err = isbd.sendReceiveSBDBinary(data->getStrFlightdata(), 340, buffer, bufferSize);
-      //Serial.print("Received: ");
-      //Serial.println(receive);
+      char* telemetry;
+      telemetry = data->getStrFlightdata();
+      Serial.println(telemetry);
+      isbd.sendSBDBinary(telemetry, 175);
 
-      //err = isbd.sendSBDBinary(data->getStrFlightdata(), 340);
-      //err = isbd.sendSBDText("Test");
+
+      /*char rxBuffer[200];
+      size_t rxBufferSize = sizeof(rxBuffer);
+
+      err = isbd.sendReceiveSBDBinary(data->getStrFlightdata(), 215, rxBuffer, rxBufferSize);*/
 
     	if (err != ISBD_SUCCESS) {
     		Serial.print("sendSBDText failed: error ");

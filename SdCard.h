@@ -3,7 +3,7 @@
 #include <SD.h>
 #include "Flightdata.h"
 
-const unsigned long deltaTimeFlightSdCard = 200;
+const unsigned long deltaTimeFlightSdCard = 1000;
 
 
 class SdCard:Subsystem {

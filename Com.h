@@ -4,7 +4,7 @@
 #include "Flightdata.h"
 
 //const unsigned long deltaTimeFlightCom = 120000;
-const unsigned long deltaTimeFlightCom = 20000;
+const unsigned long deltaTimeFlightCom = 600000;
 
 
 class Com:Subsystem {

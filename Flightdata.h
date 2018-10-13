@@ -10,7 +10,6 @@
 #define UNDER_CHUTES 4
 
 
-
 class Flightdata {
 public:
 	//getters
@@ -92,8 +91,8 @@ public:
 		dtostrf(fHum, 9, 2, hum);
 		
 
-        char telemString[340]; //max Iridium send size
-        snprintf(telemString, sizeof(telemString), "AccelMag: %s\nVoltA: %s\nVoltB: %s\nLat:  %s\nLon:  %s\nGPS Alt: %s\nTime: %s:%s:%s\nTemp: %s\nPres: %s\nBaro Alt: %s\nHumidity: %s\n", 
+        char telemString[175]; //max Iridium send size
+        snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
         		accelMag, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum);
 
         return telemString;
@@ -122,7 +121,7 @@ public:
 	}
 
 	bool gpsDetectsFreeFall() {
-		if (fGPSAlt < (highestGPSAlt - 200)) {
+		if ((GPSAltQueue[0] < (highestGPSAlt - 200)) && (GPSAltQueue[1] < (highestGPSAlt - 200)) && (GPSAltQueue[2] < (highestGPSAlt - 200))) { //only trigger if last 3 readings all are below max alt
 			gpsFreeFallWarning = true;
 			return true;
 		}
@@ -141,10 +140,26 @@ public:
 		}
 	}
 
-	float busVoltageLow() {
+	bool busVoltageLow() {
 		if (fVoltA < 3) { //!!!replace with actual values
-			return fVoltA;
+			lowVoltageWarning = true;
+			return true;
 		}
+		else {
+			return false;
+		}
+	}
+
+	bool barometerDetectsLanding() {
+		int currDist;
+		for (int i = 0; i < 6; i++) {
+			for (int j  = 0; j < 6; j++) {
+				currDist = sqrt(pow(baroQueue[i] - baroQueue[j], 2));
+				if (currDist > 20) return false;
+			}
+		}
+		baroLandingWarning = true;
+		return true;
 	}
 
 	//setters
@@ -172,6 +187,15 @@ public:
 		fLat = lat;
 		fLon = lon;
 		fGPSAlt = alt;
+
+		for (int i = 0; i < 3; i++) { //add to beginning of queue and shift
+			if (i != 2) {
+				GPSAltQueue[i] = GPSAltQueue[i+1];
+			}
+			else {
+				GPSAltQueue[i] = alt;
+			}
+		}
 	}
 	void setTime(int h, int m, int s) {
 		iHour = h;
@@ -186,6 +210,15 @@ public:
 		fPres = pres;
 		fAlt = alt;
 		fHum = hum;
+
+		for (int i = 0; i < 6; i++) { //add to beginning of queue and shift
+			if (i != 2) {
+				baroQueue[i] = baroQueue[i+1];
+			}
+			else {
+				baroQueue[i] = alt;
+			}
+		}
 	}
 	void setRemoteAbort() { //lets com call an abort from received message
 		remoteAbort = true;
@@ -193,9 +226,14 @@ public:
 	void setFlightState(int state) {
 		flightState = state;
 	}
+
+	//publicly accessible trigger indicators for SD logging
 	bool gpsFreeFallWarning = false;
 	bool baroFreeFallWarning = false;
 	bool imuFreeFallWarning = false;
+	bool lowVoltageWarning = false;
+	bool baroLandingWarning = false;
+	
 private:
 	int flightState = 1;
 
@@ -219,6 +257,8 @@ private:
 	bool remoteAbort = false;
 
 	float accelQueue[6] = {10, 10, 10, 10, 10, 10};
+	float GPSAltQueue[3] = {0, 0, 0};
+	float baroQueue[6] = {0, 0, 0, 0, 0, 0};
 	float highestGPSAlt = 0;
 	float highestBaroAlt = 0;
 };

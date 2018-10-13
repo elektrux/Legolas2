@@ -6,7 +6,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_LSM303_U.h>
 
-const unsigned long deltaTimeFlightDof = 100;
+const unsigned long deltaTimeFlightDof = 500;
 const unsigned long deltaTimeTestDof = 10000;
 
 
