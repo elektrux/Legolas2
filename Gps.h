@@ -21,6 +21,7 @@ class Gps:Subsystem {
 	private:
 	Flightdata *data; 
 
+	bool hasCycled = false; // Prevent erronius first reading from triggering premature cutdown
 	unsigned long lastActionTime = 0;
 	unsigned long lastTestTime = 0;
 	SoftwareSerial* gpsSerial;

@@ -9,9 +9,8 @@
 #define UNDER_DROGUES 3
 #define UNDER_CHUTES 4
 
-
 class Flightdata {
-public:
+public: 
 	//getters
 	float getAccelX() {
 		return fAccelX;
@@ -152,14 +151,34 @@ public:
 
 	bool barometerDetectsLanding() {
 		int currDist;
-		for (int i = 0; i < 6; i++) {
-			for (int j  = 0; j < 6; j++) {
+		for (int i = 0; i < 3; i++) {
+			for (int j  = 0; j < 3; j++) {
 				currDist = sqrt(pow(baroQueue[i] - baroQueue[j], 2));
-				if (currDist > 20) return false;
+				if (currDist > .1) return false;
 			}
 		}
 		baroLandingWarning = true;
 		return true;
+	}
+
+	bool chuteThresholdReachedBaro() {
+		if (fAlt < 610) {
+			baroChuteDeployWarning = true;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool chuteThresholdReachedGPS() {
+		if (fGPSAlt < 610) {
+			GPSChuteDeployWarning = true;
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	//setters
@@ -211,7 +230,7 @@ public:
 		fAlt = alt;
 		fHum = hum;
 
-		for (int i = 0; i < 6; i++) { //add to beginning of queue and shift
+		for (int i = 0; i < 3; i++) { //add to beginning of queue and shift
 			if (i != 2) {
 				baroQueue[i] = baroQueue[i+1];
 			}
@@ -233,6 +252,10 @@ public:
 	bool imuFreeFallWarning = false;
 	bool lowVoltageWarning = false;
 	bool baroLandingWarning = false;
+
+	//drop test indicators
+	bool baroChuteDeployWarning = false;
+	bool GPSChuteDeployWarning = false;
 	
 private:
 	int flightState = 1;
@@ -258,7 +281,7 @@ private:
 
 	float accelQueue[6] = {10, 10, 10, 10, 10, 10};
 	float GPSAltQueue[3] = {0, 0, 0};
-	float baroQueue[6] = {0, 0, 0, 0, 0, 0};
+	float baroQueue[3] = {0, 0, 0};
 	float highestGPSAlt = 0;
 	float highestBaroAlt = 0;
 };

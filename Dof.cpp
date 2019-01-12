@@ -2,7 +2,7 @@
 
 void Dof::init(Flightdata &flightdata) {
 	data = &flightdata;
-	Serial.println("Dof init.");
+	Serial.println("IMU --> init");
 
 }
 void Dof::test(unsigned long currTime) {
@@ -28,8 +28,7 @@ void Dof::flightProcess(unsigned long currTime) {
 		sensors_event_t event;
 		accel.getEvent(&event);
 		data->setAccel(event.acceleration.x, event.acceleration.y, event.acceleration.z);
-
-		Serial.println("Dof ---> flightProcess");
+		Serial.println("IMU --> flightProcess");
 	}
 }
 void Dof::groundProcess() {

@@ -6,7 +6,7 @@ Adafruit_BME280 bme;
 void Bme280::init(Flightdata& flightdata) {
 	data = &flightdata;
 	bme.begin();
-	Serial.println("Bme280 init.");
+	Serial.println("BME280 --> init");
 }
 
 void Bme280::test(unsigned long currTime) {
@@ -29,8 +29,7 @@ void Bme280::flightProcess(unsigned long currTime) {
 		lastActionTime = currTime;
 
 		data->setBme(bme.readTemperature(), bme.readPressure(), bme.readAltitude(SEALEVELPRESSURE_HPA), bme.readHumidity());
-
-    	Serial.println("Bme280 ---> flightProcess");
+		Serial.println("BME280 --> flightProcess");
 	}
 }
 

@@ -7,7 +7,7 @@ void Ina::init(Flightdata &flightdata) {
 	data = &flightdata;
 	ina219A.begin();
 	ina219B.begin();
-	Serial.println("INA A, INA B init.");
+	Serial.println("INA --> init");
 }
 
 void Ina::test(unsigned long currTime) {
@@ -33,7 +33,8 @@ void Ina::flightProcess(unsigned long currTime) {
 		float voltageB = ina219B.getBusVoltage_V();
 		data->setVolt(voltageA, voltageB);
 
-		Serial.println("Ina ---> flightProcess");
+		Serial.println("INA --> flightProcess");
+
 	}
 }
 

@@ -7,8 +7,7 @@ void Gps::init(int rx, int tx, Flightdata &flightdata) {
 	gpsSerial = new SoftwareSerial(rx, tx);
 	gpsSerial->begin(9600);
 	setupGPS();
-	Serial.println("GPS init.");
-    return;
+    Serial.println("GPS --> init");
 }
 
 void Gps::test(unsigned long currTime) {
@@ -35,10 +34,6 @@ void Gps::flightProcess(unsigned long currTime) {
 
     if ((lastActionTime + deltaTimeFlightGps) <= currTime) {
 		lastActionTime = currTime;
-		Serial.println("Starting GPS.");
-		if (0 != GPSerror) {
-			Serial.println(GPSerror);
-		}
 		gps_check_nav();
 
 		if(navmode != 6) {
@@ -48,19 +43,16 @@ void Gps::flightProcess(unsigned long currTime) {
 		}
 
 		gps_check_lock();
-		Serial.println(GPSerror);
 		gps_get_position();
-		Serial.println(GPSerror);
 		gps_get_time();
-		Serial.println(GPSerror);
 
+		Serial.println("GPS --> flightProcess");
 
 		//battV = analogRead(2);
 		// n=sprintf (superbuffer, "$$EURUS,%d,%02d:%02d:%02d,%ld,%ld,%ld,%d,%d,%d,%d", count, hour, minute, second, lat, lon, alt, sats, lock, battV, navmode);
 		// n = sprintf (superbuffer, "%s*%04X\n", superbuffer, gps_CRC16_checksum(superbuffer));
 
 		// Serial.println(superbuffer);
-		Serial.println("GPS ---> flightProcess");
 	}
 }
 
@@ -273,8 +265,10 @@ void Gps::gps_get_position()
 					(int32_t)buf[24] << 16 | (int32_t)buf[25] << 24;
 			alt /= 1000;
 		}
-		
-		data->setPosition(lat, lon, alt);
+		if (hasCycled) {
+			data->setPosition(lat, lon, alt);
+		}
+		hasCycled = true;
 
 }
 
