@@ -1,4 +1,4 @@
-#include "Com.h"
+#include "Com.h"]
 
 void Com::init(Flightdata& flightdata) {
 	data = &flightdata;
@@ -34,13 +34,18 @@ void Com::flightProcess(unsigned long currTime) {
       char* telemetry;
       telemetry = data->getStrFlightdata();
       Serial.println(telemetry);
-      isbd.sendSBDBinary(telemetry, 175);
+      //isbd.sendSBDBinary(telemetry, 175);
 
+      char receiveCmd[270];
+      char* rx;
+      rx = receiveCmd;
+      size_t size = 270;
+      isbd.sendReceiveSBDBinary(telemetry, 175, rx, size);
 
-      /*char rxBuffer[200];
-      size_t rxBufferSize = sizeof(rxBuffer);
-
-      err = isbd.sendReceiveSBDBinary(data->getStrFlightdata(), 215, rxBuffer, rxBufferSize);*/
+      if (receiveCmd[0] != '0') {
+        data->setRemoteAbort();
+        Serial.println("Remote Abort");
+      }
 
     	if (err != ISBD_SUCCESS) {
     		Serial.println(err);

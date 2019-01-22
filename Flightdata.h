@@ -74,6 +74,7 @@ public:
 		static char pres[15];
 		static char alt[15];
 		static char hum[15];
+		static char abortReceived[15];
 
 		dtostrf(getAccelMag(), 9, 2, accelMag);
 		dtostrf(fVoltA, 9, 2, voltA);
@@ -88,11 +89,12 @@ public:
 		dtostrf(fPres, 9, 2, pres);
 		dtostrf(fAlt, 9, 2, alt);
 		dtostrf(fHum, 9, 2, hum);
+		dtostrf(remoteAbort, 9, 2, abortReceived);
 		
 
         char telemString[175]; //max Iridium send size
-        snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-        		accelMag, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum);
+        snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+        		accelMag, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, abortReceived);
 
         return telemString;
 	}

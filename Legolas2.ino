@@ -12,6 +12,7 @@
 #define FIRE_CUTDOWN_B 45
 #define DEPLOY_CHUTE 49
 #define CAM_START 37
+#define CAM_STOP 99 // not physically implimented yet
 
 //pins
 const int kGpsRxPin = 62; //switched wiring A8
@@ -25,8 +26,6 @@ Bme280 bme280;
 Com com;
 SdCard sdCard;
 
-unsigned long dropStart;
-
 bool ISBDCallback() {
 	bool test = flightdata.chuteThresholdReachedBaro(); //for logging purposes
 	test = flightdata.chuteThresholdReachedGPS();
@@ -36,7 +35,7 @@ bool ISBDCallback() {
 		ina.flightProcess(millis());
 		bme280.flightProcess(millis());
 		sdCard.flightProcess(millis());
-		if (flightdata.imuDetectsFreeFall() || flightdata.gpsDetectsFreeFall() || flightdata.barometerDetectsFreeFall() || flightdata.busVoltageLow()) {
+		if (flightdata.getRemoteAbort() || flightdata.imuDetectsFreeFall() || flightdata.gpsDetectsFreeFall() || flightdata.barometerDetectsFreeFall() || flightdata.busVoltageLow()) {
 			cutDown();
 			Serial.println("CUTDOWN.");
 			debugFD();
@@ -62,9 +61,14 @@ bool ISBDCallback() {
 		ina.flightProcess(millis());
 		bme280.flightProcess(millis());
 		sdCard.flightProcess(millis());
+		if (flightdata.barometerDetectsLanding()) {
+			Serial.println("SAFING.");
+			digitalWrite(CAM_START, LOW);
+			flightdata.setFlightState(SAFING);
+		}
 	}
 	else if (flightdata.getFlightState() == SAFING) {
-
+		gps.flightProcess(millis());
 	}
 
 	gps.test(millis());
@@ -129,12 +133,12 @@ void setup() {
 }
 
 void loop() {
-	//com.flightProcess(millis());
+	com.flightProcess(millis());
 	ISBDCallback();
 }
 
 void debugFD() {
-	Serial.println();
+	/*Serial.println();
 	Serial.print("imuDetectsFreeFall: ");
 	Serial.println(flightdata.imuFreeFallWarning);
 	Serial.print("gpsDetectsFreeFall: ");
@@ -149,7 +153,9 @@ void debugFD() {
 	Serial.println(flightdata.GPSChuteDeployWarning);
 	Serial.print("baroLandingWarning: ");
 	Serial.println(flightdata.baroLandingWarning);
-	Serial.println();
+	Serial.print("Remote Abort: ");
+	Serial.println(flightdata.getRemoteAbort());
+	Serial.println();*/
 }
 
 

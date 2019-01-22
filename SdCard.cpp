@@ -10,7 +10,7 @@ void SdCard::init(Flightdata& flightdata) {
 		return;
 	}
 	dataLog = SD.open("log.txt", FILE_WRITE);
-	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning,LowVoltageWarning,BaroLandingWarning,ChuteThresholdReachedBaro,ChuteThreshholdReachedGPS");
+	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning,LowVoltageWarning,BaroLandingWarning,ChuteThresholdReachedBaro,ChuteThreshholdReachedGPS,RemoteAbort");
 	dataLog.close();
 	Serial.println("SD --> init");
 }
@@ -47,6 +47,7 @@ void SdCard::flightProcess(unsigned long currTime) {
 		static char baroLandingWarning[15];
 		static char baroChuteDeployWarning[15];
 		static char GPSChuteDeployWarning[15];
+		static char remoteAbort[15];
 
 		dtostrf(data->getAccelMag(), 9, 2, accelMag);
 		dtostrf(data->getAccelX(), 9, 2, accelX);
@@ -72,6 +73,7 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dtostrf(data->baroLandingWarning, 9, 2, baroLandingWarning);
 		dtostrf(data->baroChuteDeployWarning, 9, 2, baroChuteDeployWarning);
 		dtostrf(data->GPSChuteDeployWarning, 9, 2, GPSChuteDeployWarning);
+		dtostrf(data->getRemoteAbort(), 9, 2, remoteAbort);
 
 		dataLog = SD.open("log.txt", FILE_WRITE);
 		if (dataLog) {
