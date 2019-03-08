@@ -27,8 +27,14 @@ public:
 	float getVoltA() {
 		return fVoltA;
 	}
+	float getCurA() {
+		return fCurA;
+	}
 	float getVoltB() {
 		return fVoltB;
+	}
+	float getCurB() {
+		return fCurB;
 	}
 	float getLat() {
 		return fLat;
@@ -197,9 +203,11 @@ public:
 			}
 		}
 	}
-	void setVolt(float vA, float vB) {
+	void setVolt(float vA, float cA, float vB, float cB) {
 		fVoltA = vA;
+		fCurA = cA;
 		fVoltB = vB;
+		fCurB = cB;
 	}
 	void setPosition(float lat, float lon, float alt) {
 		if (alt > highestGPSAlt) {
@@ -267,7 +275,9 @@ private:
 	float fAccelY = 0;
 	float fAccelZ = 0;
 	float fVoltA = 0;
+	float fCurA = 0;
 	float fVoltB = 0;
+	float fCurB = 0;
 	float fLat = 0;
 	float fLon = 0;
 	float fGPSAlt = 0;

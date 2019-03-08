@@ -30,9 +30,10 @@ void Ina::flightProcess(unsigned long currTime) {
 		lastActionTime = currTime;
 
 		float voltageA = ina219A.getBusVoltage_V();
+		float currentA = ina219A.getCurrent_mA();
 		float voltageB = ina219B.getBusVoltage_V();
-		data->setVolt(voltageA, voltageB);
-
+		float currentB = ina219B.getCurrent_mA();
+		data->setVolt(voltageA, currentA, voltageB, currentB);
 		Serial.println("INA --> flightProcess");
 
 	}
