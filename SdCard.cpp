@@ -10,7 +10,7 @@ void SdCard::init(Flightdata& flightdata) {
 		return;
 	}
 	dataLog = SD.open("log.txt", FILE_WRITE);
-	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,CurA,CurB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Temp,Pres,BaroAlt,Humidity,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning,LowVoltageWarning,BaroLandingWarning,ChuteThresholdReachedBaro,ChuteThreshholdReachedGPS,RemoteAbort");
+	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,CurA,CurB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Sats,Temp,Pres,BaroAlt,Humidity,HighestGPSAlt,HighestBaroAlt,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning,LowVoltageWarning,BaroLandingWarning,ChuteThresholdReachedBaro,ChuteThreshholdReachedGPS,RemoteAbort");
 	dataLog.close();
 	Serial.println("SD --> init");
 }
@@ -37,10 +37,13 @@ void SdCard::flightProcess(unsigned long currTime) {
 		static char hour[15];
 		static char minute[15];
 		static char second[15];
+		static char sats[15];
 		static char temp[15];
 		static char pres[15];
 		static char alt[15];
 		static char hum[15];
+		static char highestGPSAlt[15];
+		static char highestBaroAlt[15];
 		static char flightState[15];
 		static char gpsFreeFallWarning[15];
 		static char imuFreeFallWarning[15];
@@ -65,10 +68,13 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dtostrf(data->getHour(), 9, 2, hour);
 		dtostrf(data->getMinute(), 9, 2, minute);
 		dtostrf(data->getSecond(), 9, 2, second);
+		dtostrf(data->getSats(), 9, 2, sats);
 		dtostrf(data->getTemp(), 9, 2, temp);
 		dtostrf(data->getPres(), 9, 2, pres);
 		dtostrf(data->getAlt(), 9, 2, alt);
 		dtostrf(data->getHum(), 9, 2, hum);
+		dtostrf(data->getHighestGPSAlt(), 9, 2, highestGPSAlt);
+		dtostrf(data->getHighestBaroAlt(), 9, 2, highestBaroAlt);
 		dtostrf(data->getFlightState(), 9, 2, flightState);
 		dtostrf(data->gpsFreeFallWarning, 9, 2, gpsFreeFallWarning);
 		dtostrf(data->imuFreeFallWarning, 9, 2, imuFreeFallWarning);
@@ -82,8 +88,8 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dataLog = SD.open("log.txt", FILE_WRITE);
 		if (dataLog) {
 			char telemString[340]; //max Iridium send size
-        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-        		accelMag, accelX, accelY, accelZ, voltA, voltB, curA, curB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, flightState, gpsFreeFallWarning, imuFreeFallWarning, baroFreeFallWarning, lowVoltageWarning, baroLandingWarning, baroChuteDeployWarning,GPSChuteDeployWarning);
+        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+        		accelMag, accelX, accelY, accelZ, voltA, voltB, curA, curB, lat, lon, GPSAlt, hour, minute, second, sats,temp, pres, alt, hum, highestGPSAlt, highestBaroAlt, flightState, gpsFreeFallWarning, imuFreeFallWarning, baroFreeFallWarning, lowVoltageWarning, baroLandingWarning, baroChuteDeployWarning,GPSChuteDeployWarning);
 			dataLog.println(telemString);
 			dataLog.close();
 		}

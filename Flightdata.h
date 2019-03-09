@@ -45,6 +45,12 @@ public:
 	float getGPSAlt() {
 		return fGPSAlt;
 	}
+	float getHighestGPSAlt() {
+		return highestGPSAlt;
+	}
+	float getHighestBaroAlt() {
+		return highestBaroAlt;
+	}
 	float getHour() {
 		return iHour;
 	}
@@ -53,6 +59,9 @@ public:
 	}
 	float getSecond() {
 		return iSecond;
+	}
+	float getSats() {
+		return sats;
 	}
 	float getTemp() {
 		return fTemp;
@@ -68,8 +77,8 @@ public:
 	}
 	char* getStrFlightdata() { 
 		static char accelMag[15];
-		static char voltA[15];
-		static char voltB[15];
+		static char volt[15];
+		static char amp[15];
 		static char lat[15];
 		static char lon[15];
 		static char GPSAlt[15];
@@ -83,8 +92,8 @@ public:
 		static char abortReceived[15];
 
 		dtostrf(getAccelMag(), 9, 2, accelMag);
-		dtostrf(fVoltA, 9, 2, voltA);
-		dtostrf(fVoltB, 9, 2, voltB);
+		dtostrf(fVoltA, 9, 2, volt);
+		dtostrf(fCurA, 9, 2, amp);
 		dtostrf(fLat, 9, 2, lat);
 		dtostrf(fLon, 9, 2, lon);
 		dtostrf(fGPSAlt, 9, 2, GPSAlt);
@@ -100,7 +109,7 @@ public:
 
         char telemString[175]; //max Iridium send size
         snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-        		accelMag, voltA, voltB, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, abortReceived);
+        		accelMag, volt, amp, lat, lon, GPSAlt, hour, minute, second, temp, pres, alt, hum, abortReceived);
 
         return telemString;
 	}
@@ -231,6 +240,9 @@ public:
 		iMinute = m;
 		iSecond = s;
 	}
+	void setSats(int satsLocked) {
+		sats = satsLocked;
+	}
 	void setBme(float temp, float pres, float alt, float hum) {
 		if (alt > highestBaroAlt) {
 			highestBaroAlt = alt;
@@ -284,6 +296,7 @@ private:
 	int iHour = 0;
 	int iMinute = 0;
 	int iSecond = 0;
+	int sats = 0;
 	float fTemp = 0;
 	float fPres = 0;
 	float fAlt = 0;

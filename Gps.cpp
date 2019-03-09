@@ -7,6 +7,13 @@ void Gps::init(int rx, int tx, Flightdata &flightdata) {
 	gpsSerial = new SoftwareSerial(rx, tx);
 	gpsSerial->begin(9600);
 	setupGPS();
+	gps_check_lock();
+	while (sats < 3) {
+		gps_check_lock();
+		Serial.println("Acquiring GPS Lock.");
+		Serial.print("Satellites: ");
+		Serial.println(sats);
+	}
     Serial.println("GPS --> init");
 }
 
@@ -45,6 +52,8 @@ void Gps::flightProcess(unsigned long currTime) {
 		gps_check_lock();
 		gps_get_position();
 		gps_get_time();
+		data->setSats(sats);
+
 
 		Serial.println("GPS --> flightProcess");
 

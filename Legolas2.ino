@@ -27,8 +27,6 @@ Com com;
 SdCard sdCard;
 
 bool ISBDCallback() {
-	bool test = flightdata.chuteThresholdReachedBaro(); //for logging purposes
-	test = flightdata.chuteThresholdReachedGPS();
 	if (flightdata.getFlightState() == ASCENT) {
 		gps.flightProcess(millis());
 		dof.flightProcess(millis());
@@ -75,7 +73,7 @@ bool ISBDCallback() {
 	dof.test(millis());
 	ina.test(millis());
 	bme280.test(millis());
-	bool stupid = flightdata.barometerDetectsLanding();
+	bool tempLandingDetect = flightdata.barometerDetectsLanding();
 	debugFD();
 	
 	return true;
@@ -138,7 +136,7 @@ void loop() {
 }
 
 void debugFD() {
-	/*Serial.println();
+	Serial.println();
 	Serial.print("imuDetectsFreeFall: ");
 	Serial.println(flightdata.imuFreeFallWarning);
 	Serial.print("gpsDetectsFreeFall: ");
@@ -155,7 +153,7 @@ void debugFD() {
 	Serial.println(flightdata.baroLandingWarning);
 	Serial.print("Remote Abort: ");
 	Serial.println(flightdata.getRemoteAbort());
-	Serial.println();*/
+	Serial.println();
 }
 
 
