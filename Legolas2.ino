@@ -74,7 +74,7 @@ bool ISBDCallback() {
 	ina.test(millis());
 	bme280.test(millis());
 	bool tempLandingDetect = flightdata.barometerDetectsLanding();
-	debugFD();
+	//debugFD();
 	
 	return true;
 }
@@ -99,7 +99,6 @@ void deployChute() {
 	digitalWrite(ARM, LOW);
 }
 
-
 void setup() {
 	Serial.begin(9600);
 
@@ -120,7 +119,7 @@ void setup() {
 
 	digitalWrite(CAM_START, HIGH);
 
-	//run through all flight processes 1x to calibrate
+	//run through all flight processes
 	gps.flightProcess(millis());
 	dof.flightProcess(millis());
 	ina.flightProcess(millis());
