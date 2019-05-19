@@ -28,7 +28,7 @@ SdCard sdCard;
 
 bool ISBDCallback() {
 	if (flightdata.getFlightState() == ASCENT) {
-		//gps.flightProcess(millis());
+		gps.flightProcess(millis());
 		dof.flightProcess(millis());
 		ina.flightProcess(millis());
 		bme280.flightProcess(millis());

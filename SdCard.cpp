@@ -10,7 +10,7 @@ void SdCard::init(Flightdata& flightdata) {
 		return;
 	}
 	dataLog = SD.open("log.txt", FILE_WRITE);
-	dataLog.println("AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,CurA,CurB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Sats,Temp,Pres,BaroAlt,Humidity,HighestGPSAlt,HighestBaroAlt,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning,LowVoltageWarning,BaroLandingWarning,ChuteThresholdReachedBaro,ChuteThreshholdReachedGPS,RemoteAbort");
+	dataLog.println("SysTime,AccelMag,AccelX,AccelY,AccelZ,VoltA,VoltB,CurA,CurB,Latitude,Longitude,GPSAlt,Hour,Minute,Second,Sats,Temp,Pres,BaroAlt,Humidity,HighestGPSAlt,HighestBaroAlt,FlightState,GpsFreeFallWarning,ImuFreeFallWarning,BaroFreeFallWarning,LowVoltageWarning,BaroLandingWarning,ChuteThresholdReachedBaro,ChuteThreshholdReachedGPS,RemoteAbort");
 	dataLog.close();
 	Serial.println("SD --> init");
 }
@@ -23,6 +23,7 @@ void SdCard::flightProcess(unsigned long currTime) {
 	if ((lastActionTime + deltaTimeFlightSdCard) <= currTime) {
 		lastActionTime = currTime;
 
+		static char sysTime[15];
 		static char accelMag[15];
 		static char accelX[15];
 		static char accelY[15];
@@ -54,6 +55,7 @@ void SdCard::flightProcess(unsigned long currTime) {
 		static char GPSChuteDeployWarning[15];
 		static char remoteAbort[15];
 
+		dtostrf(currTime, 9, 2, sysTime);
 		dtostrf(data->getAccelMag(), 9, 2, accelMag);
 		dtostrf(data->getAccelX(), 9, 2, accelX);
 		dtostrf(data->getAccelY(), 9, 2, accelY);
@@ -88,8 +90,8 @@ void SdCard::flightProcess(unsigned long currTime) {
 		dataLog = SD.open("log.txt", FILE_WRITE);
 		if (dataLog) {
 			char telemString[340]; //max Iridium send size
-        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
-        		accelMag, accelX, accelY, accelZ, voltA, voltB, curA, curB, lat, lon, GPSAlt, hour, minute, second, sats,temp, pres, alt, hum, highestGPSAlt, highestBaroAlt, flightState, gpsFreeFallWarning, imuFreeFallWarning, baroFreeFallWarning, lowVoltageWarning, baroLandingWarning, baroChuteDeployWarning,GPSChuteDeployWarning);
+        	snprintf(telemString, sizeof(telemString), "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", 
+        		sysTime, accelMag, accelX, accelY, accelZ, voltA, voltB, curA, curB, lat, lon, GPSAlt, hour, minute, second, sats,temp, pres, alt, hum, highestGPSAlt, highestBaroAlt, flightState, gpsFreeFallWarning, imuFreeFallWarning, baroFreeFallWarning, lowVoltageWarning, baroLandingWarning, baroChuteDeployWarning,GPSChuteDeployWarning);
 			dataLog.println(telemString);
 			dataLog.close();
 		}
