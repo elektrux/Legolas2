@@ -19,7 +19,7 @@ class Gps:Subsystem {
 
 	private:
 	Flightdata *data;
-	SoftwareSerial gpsSerial = SoftwareSerial(62, 63);
+	SoftwareSerial gpsSerial = SoftwareSerial(63, 62);
 	SFE_UBLOX_GPS gpsCom;
 	unsigned long lastActionTime = 0;
 	unsigned long lastTestTime = 0;

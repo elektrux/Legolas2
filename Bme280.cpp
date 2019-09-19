@@ -5,7 +5,7 @@ Adafruit_BME280 bme;
 
 void Bme280::init(Flightdata& flightdata) {
 	data = &flightdata;
-	bme.begin();
+	bme.begin(0x76);
 	Serial.println("BME280 --> init");
 }
 

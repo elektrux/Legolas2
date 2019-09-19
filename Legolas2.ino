@@ -10,7 +10,8 @@
 #define ARM 47
 #define FIRE_CUTDOWN_A 43
 #define FIRE_CUTDOWN_B 45
-#define DEPLOY_CHUTE 49
+#define MAIN_CHUTE 49
+#define BACKUP_CHUTE 41
 #define CAM_START 37
 #define CAM_STOP 99 // not physically implimented yet
 
@@ -93,9 +94,13 @@ void cutDown() {
 
 void deployChute() {
 	digitalWrite(ARM, HIGH);
-	digitalWrite(DEPLOY_CHUTE, HIGH);
+	digitalWrite(MAIN_CHUTE, HIGH);
 	delay(1000);
-	digitalWrite(DEPLOY_CHUTE, LOW);
+	digitalWrite(MAIN_CHUTE, LOW);	
+	delay(200);
+	digitalWrite(BACKUP_CHUTE, HIGH);
+	delay(1000);
+	digitalWrite(BACKUP_CHUTE, LOW);
 	digitalWrite(ARM, LOW);
 }
 
@@ -105,7 +110,8 @@ void setup() {
 	pinMode(ARM, OUTPUT);
 	pinMode(FIRE_CUTDOWN_A, OUTPUT);
 	pinMode(FIRE_CUTDOWN_B, OUTPUT);
-	pinMode(DEPLOY_CHUTE, OUTPUT);
+	pinMode(MAIN_CHUTE, OUTPUT);
+	pinMode(BACKUP_CHUTE, OUTPUT);
 	pinMode(CAM_START, OUTPUT);
 
 	gps.init(kGpsRxPin, kGpsTxPin, flightdata);
@@ -130,7 +136,7 @@ void setup() {
 }
 
 void loop() {
-	com.flightProcess(millis());
+	//com.flightProcess(millis());
 	ISBDCallback();
 }
 
